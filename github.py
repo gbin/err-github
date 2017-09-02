@@ -33,14 +33,12 @@ Example post from github:
 """
 
 from config import CHATROOM_PRESENCE
-from errbot import BotPlugin
-from errbot.builtins.webserver import webhook
+from errbot import BotPlugin, webhook
 
 class Github(BotPlugin):
-    min_err_version = '1.6.0'
+    min_err_version = '4.0.0'
 
     @webhook(r'/github/', form_param = 'payload')
     def gh_notifs(self, payload):
         msg = 'Github commits on %s:\n' % payload['repository']['name'] + '\n'.join(("%s: %s [ %s ] " % (commit['author']['name'], commit['message'], commit['url']) for commit in payload['commits']))
-        self.send(CHATROOM_PRESENCE[0], msg, message_type='groupchat')
-
+        self.send(self.build_identifier(CHATROOM_PRESENCE[0]), msg)
